@@ -22,13 +22,13 @@ import android.widget.Toast;
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
-    ArrayList<Songs> songs = new ArrayList<>();
-    RecyclerView recyclerView;
-    Context context;
-    ContentResolver contentResolver;
-    Cursor cursor;
-    Uri uri;
-    RecyclerViewAdapter recyclerViewAdapter;
+   private ArrayList<Songs> songs = new ArrayList<>();
+   private RecyclerView recyclerView;
+   private Context context;
+   private ContentResolver contentResolver;
+   private Cursor cursor;
+   private Uri uri;
+   private RecyclerViewAdapter recyclerViewAdapter;
 
     public static final int REQUEST_CODE = 1001;
 
@@ -50,7 +50,7 @@ public class MainActivity extends AppCompatActivity {
     private void initData() {
         context = getApplicationContext();
         contentResolver = context.getContentResolver();
-        recyclerViewAdapter=new RecyclerViewAdapter(songs);
+        recyclerViewAdapter=new RecyclerViewAdapter(songs,MainActivity.this);
         recyclerView.setLayoutManager(new LinearLayoutManager(this,RecyclerView.VERTICAL,false));
         recyclerView.setAdapter(recyclerViewAdapter);
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
@@ -137,8 +137,9 @@ public class MainActivity extends AppCompatActivity {
             do {
 
                 String sTitle = cursor.getString(Title);
-                songs.add(new Songs(sTitle, null));
-                    recyclerViewAdapter.notifyDataSetChanged();
+                songs.add(new Songs(sTitle, Uri.parse(cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.DATA)))));
+
+                recyclerViewAdapter.notifyDataSetChanged();
             } while (cursor.moveToNext());
         }
 
@@ -154,7 +155,7 @@ public class MainActivity extends AppCompatActivity {
                 do {
 
                     String sTitle = cursor.getString(Title2);
-                    songs.add(new Songs(sTitle, null));
+                    songs.add(new Songs(sTitle, Uri.parse(cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.DATA)))));
                         recyclerViewAdapter.notifyDataSetChanged();
                 } while (cursor.moveToNext());
 
